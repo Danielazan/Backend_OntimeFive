@@ -123,6 +123,26 @@ const Answer =(msg)=>{
   });
 }
 
+const icecandidate = (msg)=>{
+
+  const message={
+    type: "candidate",
+    candidate: msg.candidate,
+    from: msg.name,
+  }  
+      
+    
+  connections.map((users) => {
+    if (users.id == msg.name) {
+      users.send(JSON.stringify(message));
+
+      console.log(`candiate sent to user: ${msg.name}`);
+    }
+  });
+
+  console.log("candiates=======>",msg.name)
+}
+
 wss.on("connection", (ws, request) => {
   const { userName } = url.parse(request.url, true).query;
 
@@ -149,34 +169,25 @@ wss.on("connection", (ws, request) => {
 
       case "offer":
         senndOffer(data);
-        // const callingClient = clients[ws.remoteAddress];
-        // const targetUsername = data.offer.name;
-        // const targetClient = Object.values(clients).find(
-        //   (client) => client.username === targetUsername
-        // );
+        
 
         break;
 
       case "answer":
         Answer(data);
-        // const answeringClient = clients[ws.remoteAddress];
-        // const targetClients = Object.values(clients).find(
-        //   (client) => client.username === data.answer.name
-        // );
-
-        // if (targetClients) {
-        //   
-        // } else {
-        //   console.log(`User ${data.answer.name} not found`);
-        // }
+        
         break;
+
+        
       case "candidate":
-        const candidateClient = clients[ws.remoteAddress];
-        broadcast({
-          type: "candidate",
-          candidate: data.candidate,
-          from: candidateClient.username,
-        });
+
+       icecandidate(data)
+        // const candidateClient = clients[ws.remoteAddress];
+        // broadcast({
+        //   type: "candidate",
+        //   candidate: data.candidate,
+        //   from: candidateClient.username,
+        // });
         break;
       case "leave":
         delete clients[ws.remoteAddress];
