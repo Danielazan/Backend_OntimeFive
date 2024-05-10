@@ -82,22 +82,51 @@ const login = (msg, user, ws) => {
   });
 };
 
+// const senndOffer = (msg) => {
+//   console.log("userto call",msg.name)
+
+// userToCall =msg.name
+
+// mainMessage ={
+//         type: "offer",
+//         offer: msg.offer,
+//         caller: msg.caller
+//       }
+
+//  connections.map((users) => {
+//     if (users.id == userToCall) {
+//       users.send(JSON.stringify(mainMessage));
+
+//       console.log(`offer sent to user: ${userToCall}`);
+//     }
+//   });
+// };
+
+
+let isFirstOfferSent = false;
 const senndOffer = (msg) => {
-  console.log("userto call",msg.name)
+  
+  console.log("User to call:", msg.name);
 
-userToCall =msg.name
+  userToCall = msg.name;
 
-mainMessage ={
-        type: "offer",
-        offer: msg.offer,
-        caller: msg.caller
-      }
+  mainMessage = {
+    type: "offer",
+    offer: msg.offer,
+    caller: msg.caller
+  };
 
- connections.map((users) => {
+  connections.map((users) => {
     if (users.id == userToCall) {
-      users.send(JSON.stringify(mainMessage));
-
-      console.log(`offer sent to user: ${userToCall}`);
+      if (isFirstOfferSent) {
+        // Send the second offer
+        users.send(JSON.stringify(mainMessage));
+        console.log(`Second offer sent to user: ${userToCall}`);
+      } else {
+        // Handle the first offer differently if needed
+        console.log("First offer sent to user: ", userToCall);
+        isFirstOfferSent = true;
+      }
     }
   });
 };
